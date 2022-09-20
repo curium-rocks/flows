@@ -102,15 +102,6 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: 'scan-results.sarif'
-      - name: Export Container TAR
-        if: ${{ github.event_name == 'pull_request' }}
-        timeout-minutes: 4
-        run: |
-          set -e
-          set -x
-          mkdir -p /tmp/artifacts
-          docker save ${{ steps.short-sha.outputs.sha_tag }} -o /tmp/artifacts/image.tar
-          gzip -c /tmp/artifacts/image.tar > /tmp/artifacts/image.tar.gz
       - name: Push image
         if: github.event_name != 'pull_request'
         id: push
@@ -131,12 +122,3 @@ jobs:
         env:
           COSIGN_EXPERIMENTAL: "true"
         run: cosign sign --force --recursive ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.push.outputs.digest }}
-      - name: Upload Container TAR
-        if: ${{ github.event_name == 'pull_request' }}
-        timeout-minutes: 4
-        uses: actions/upload-artifact@v3
-        with:
-          path: /tmp/artifacts/image.tar.gz
-          name: image.tar.gz
-          retention-days: 1
-          if-no-files-found: error
