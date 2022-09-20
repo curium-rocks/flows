@@ -1,0 +1,153 @@
+name: Lint and Test Charts
+on:
+  workflow_call:
+    inputs:
+      charts_dir:
+        required: false
+        default: 'helm'
+        type: 'string'
+        description: 'Path to the directory holding the helm charts'
+jobs:
+  lint-chart:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+        with:
+          fetch-depth: 0
+      - name: Install Helm
+        uses: azure/setup-helm@v3.3
+        with:
+          version: v3.9.2
+      - uses: actions/setup-python@b4fe97ecda6b7a5fcd2448cdbf6a8fc76b3bedb0
+        with:
+          python-version: 3.7
+      - name: Install chart-testing
+        uses: helm/chart-testing-action@09ed88797198755e5031f25be13da255e7e33aad
+      - name: Run chart-testing (list-changed)
+        id: list-changed
+        run: |
+          changed=$(ct list-changed --chart-dirs ${{ inputs.charts_dir }} --target-branch ${{ github.event.repository.default_branch }})
+          if [[ -n "$changed" ]]; then
+            echo "::set-output name=changed::true"
+          fi
+      - name: Run chart-testing (lint)
+        run: ct lint --chart-dirs ${{ inputs.charts_dir }} --target-branch ${{ github.event.repository.default_branch }}
+  lint-docs:
+    runs-on: ubuntu-latest
+    needs: lint-chart
+    steps:
+      - name: Checkout
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+      - name: Run helm-docs
+        run: |
+          mkdir ./.bin
+          export PATH="./.bin:$PATH"
+          set -euxo pipefail
+          HELM_DOCS_VERSION=1.11.0
+
+          # install helm-docs
+          curl --silent --show-error --fail --location --output /tmp/helm-docs.tar.gz https://github.com/norwoodj/helm-docs/releases/download/v"${HELM_DOCS_VERSION}"/helm-docs_"${HELM_DOCS_VERSION}"_Linux_x86_64.tar.gz
+          tar -C .bin/ -xf /tmp/helm-docs.tar.gz helm-docs
+
+          # validate docs
+          helm-docs
+          git diff --exit-code
+  kubeval-chart:
+    runs-on: ubuntu-latest
+    needs:
+      - lint-chart
+      - lint-docs
+    strategy:
+      fail-fast: false
+      matrix:
+        k8s:
+          - v1.25.0
+          - v1.24.4
+          - v1.23.10
+          - v1.22.13
+    steps:
+      - name: Checkout
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+        with:
+          fetch-depth: 0
+      - name: Run kubeval
+        env:
+          KUBERNETES_VERSION: ${{ matrix.k8s }}
+        run: |
+          mkdir ./.bin
+          export PATH="./.bin:$PATH"
+
+          set -euxo pipefail
+
+          # renovate: datasource=github-releases depName=kubeval lookupName=instrumenta/kubeval
+          KUBEVAL_VERSION=v0.16.1
+
+          # renovate: datasource=github-releases depName=semver2 lookupName=Ariel-Rodriguez/sh-semversion-2
+          SEMVER_VERSION=1.0.3
+
+          CHART_DIRS="$(git diff --find-renames --name-only "$(git rev-parse --abbrev-ref HEAD)" remotes/origin/main -- ${{ inputs.charts_dir }} | cut -d '/' -f 2 | uniq)"
+          SCHEMA_LOCATION="https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/"
+
+          # install kubeval
+          curl --silent --show-error --fail --location --output /tmp/kubeval.tar.gz https://github.com/instrumenta/kubeval/releases/download/"${KUBEVAL_VERSION}"/kubeval-linux-amd64.tar.gz
+          tar -C .bin/ -xf /tmp/kubeval.tar.gz kubeval
+
+          # install semver compare
+          curl -sSfLo .bin/semver2 https://raw.githubusercontent.com/Ariel-Rodriguez/sh-semversion-2/${SEMVER_VERSION}/semver2.sh
+          chmod +x .bin/semver2
+
+          # add helm repos
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+
+          # Compute required kubernetes api versions
+          apis=''
+
+          if [[ "$(semver2 ${KUBERNETES_VERSION#v} 1.21.0)" -ge 0 ]]; then
+            apis="${apis} --api-versions batch/v1/CronJob"
+          else
+            apis="${apis} --api-versions batch/v1beta1/CronJob"
+          fi
+
+          # validate charts
+          for CHART_DIR in ${CHART_DIRS}; do
+            (cd charts/${CHART_DIR}; helm dependency build)
+            helm template \
+              $apis \
+              charts/"${CHART_DIR}" | kubeval \
+                --strict \
+                --ignore-missing-schemas \
+                --kubernetes-version "${KUBERNETES_VERSION#v}" \
+                --schema-location "${SCHEMA_LOCATION}"
+          done
+  install-chart:
+    name: install-chart
+    runs-on: ubuntu-latest
+    needs:
+      - lint-chart
+      - lint-docs
+      - kubeval-chart
+    strategy:
+      matrix:
+        k8s:
+          - v1.25.0
+          - v1.24.4
+          - v1.23.10
+          - v1.22.13
+    steps:
+      - name: Checkout
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b 
+        with:
+          fetch-depth: 0
+
+      - name: Create kind ${{ matrix.k8s }} cluster
+        uses: helm/kind-action@d08cf6ff1575077dee99962540d77ce91c62387d 
+        with:
+          node_image: kindest/node:${{ matrix.k8s }}
+          version: v0.15.0 
+
+      - name: Install chart-testing
+        uses: helm/chart-testing-action@09ed88797198755e5031f25be13da255e7e33aad 
+
+      - name: Run chart install
+        run: ct install --chart-dirs ${{ inputs.charts_dir }} --target-branch ${{ github.event.repository.default_branch }}
