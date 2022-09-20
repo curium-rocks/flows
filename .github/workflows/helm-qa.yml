@@ -114,7 +114,7 @@ jobs:
             (cd charts/${CHART_DIR}; helm dependency build)
             helm template \
               $apis \
-              charts/"${CHART_DIR}" | kubeval \
+              ${{ inputs.charts_dir }}/"${CHART_DIR}" | kubeval \
                 --strict \
                 --ignore-missing-schemas \
                 --kubernetes-version "${KUBERNETES_VERSION#v}" \
