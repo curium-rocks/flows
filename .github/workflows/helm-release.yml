@@ -1,0 +1,25 @@
+name: Release Charts
+on:
+  workflow_call:
+    inputs:
+      charts_dir:
+        type: string
+        required: false
+        default: helm
+        description: 'Path to the directory with the helm charts'
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@main
+        env:
+          CR_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        with:
+          charts_dir: ${{ inputs.charts_dir }}
