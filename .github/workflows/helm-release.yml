@@ -9,6 +9,7 @@ on:
         description: 'Path to the directory with the helm charts'
 jobs:
   release:
+    name: 'Publish to Github Pages'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
