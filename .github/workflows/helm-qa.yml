@@ -160,5 +160,5 @@ jobs:
 
       - name: Run chart install
         env:
-          CT_HELM_EXTRA_ARGS: '--timeout 500s --debug ${{ inputs.helm_extra_sets }}'
-        run: ct install --chart-dirs ${{ inputs.charts_dir }} --target-branch ${{ github.event.repository.default_branch }} --debug
+          CT_HELM_EXTRA_ARGS: '--timeout 500s --debug'
+        run: ct install --chart-dirs ${{ inputs.charts_dir }} --target-branch ${{ github.event.repository.default_branch }} --helm-extra-set-args "${{ inputs.helm_extra_sets }}" --debug
