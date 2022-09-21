@@ -146,6 +146,9 @@ jobs:
         with:
           node_image: kindest/node:${{ matrix.k8s }}
           version: v0.15.0 
+      
+      - name: Install Ingress Controller
+        run: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 
       - name: Install chart-testing
         uses: helm/chart-testing-action@09ed88797198755e5031f25be13da255e7e33aad 
