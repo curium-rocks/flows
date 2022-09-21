@@ -128,6 +128,7 @@ jobs:
       - lint-docs
       - kubeval-chart
     strategy:
+      fail-fast: false
       matrix:
         k8s:
           - v1.25.0
