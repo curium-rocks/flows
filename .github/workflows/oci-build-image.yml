@@ -58,6 +58,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Get Default Branch Name
         id: default-branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: echo "::set-output name=name::$(gh repo view --json defaultBranchRef --jq .defaultBranchRef.name)"
       - name: Extract Docker metadata
         id: meta
