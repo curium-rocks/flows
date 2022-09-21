@@ -7,6 +7,11 @@ on:
         default: 'helm'
         type: 'string'
         description: 'Path to the directory holding the helm charts'
+      helm_extra_sets:
+        required: false
+        default: ''
+        type: string
+        description: 'A collection of --sets for ct'
 jobs:
   lint-chart:
     runs-on: ubuntu-latest
@@ -156,4 +161,5 @@ jobs:
       - name: Run chart install
         env:
           CT_HELM_EXTRA_ARGS: '--timeout 500s --debug'
+          CT_HELM_EXTRA_SET_ARGS: '${{ inputs.helm_extra_sets }}'
         run: ct install --chart-dirs ${{ inputs.charts_dir }} --target-branch ${{ github.event.repository.default_branch }} --debug
