@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+        uses: actions/checkout@e6d535c99c374d0c3f6d8cd8086a57b43c6c700a
         with:
           fetch-depth: 0
       - name: Install Helm
@@ -43,7 +43,7 @@ jobs:
     needs: lint-chart
     steps:
       - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+        uses: actions/checkout@e6d535c99c374d0c3f6d8cd8086a57b43c6c700a
       - name: Run helm-docs
         run: |
           mkdir ./.bin
@@ -73,7 +73,7 @@ jobs:
           - v1.22.13
     steps:
       - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
+        uses: actions/checkout@e6d535c99c374d0c3f6d8cd8086a57b43c6c700a
         with:
           fetch-depth: 0
       - name: Run kubeval
@@ -142,7 +142,7 @@ jobs:
           - v1.22.13
     steps:
       - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b 
+        uses: actions/checkout@e6d535c99c374d0c3f6d8cd8086a57b43c6c700a 
         with:
           fetch-depth: 0
 
