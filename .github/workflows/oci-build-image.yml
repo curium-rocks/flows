@@ -10,6 +10,12 @@ on:
         description: |
           If CodeQL is enabled or not, when enabled it will upload the sarif scan results and
            make any findings available in the security tab
+      download_artifact:
+        type: string
+        required: false
+        default: ''
+        description: |
+          If provided, the name of a artifact that will be downloaded prior to building the dockerfile
       image_name:
         type: string
         required: true
@@ -76,6 +82,11 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=sha
             type=raw,value={{date 'YYYYMMDD'}}-{{sha}}
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        if: ${{ inputs.download_artifact != '' }}
+        with:
+          name: ${{ inputs.download_artifact }}
       - name: Build Docker image
         id: build
         timeout-minutes: 25
