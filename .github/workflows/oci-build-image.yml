@@ -87,6 +87,8 @@ jobs:
         if: ${{ inputs.download_artifact != '' }}
         with:
           name: ${{ inputs.download_artifact }}
+      - name: Display structure before build
+        run: ls -R
       - name: Build Docker image
         id: build
         timeout-minutes: 25
