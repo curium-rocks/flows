@@ -36,6 +36,11 @@ jobs:
           if [[ -n "$changed" ]]; then
             echo "::set-output name=changed::true"
           fi
+      - name: Add Helm Repos
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add k8s-at-home https://k8s-at-home.com/charts
+          helm repo update
       - name: Run chart-testing (lint)
         run: ct lint --chart-dirs ${{ inputs.charts_dir }} --target-branch ${{ github.event.repository.default_branch }}
   lint-docs:
@@ -147,7 +152,6 @@ jobs:
         uses: actions/checkout@bf085276cecdb0cc76fbbe0687a5a0e786646936 
         with:
           fetch-depth: 0
-
       - name: Create kind ${{ matrix.k8s }} cluster
         uses: helm/kind-action@6fa2f9f271cb2c64aeebec6f4c48d258ea7f3f3f 
         with:
@@ -159,7 +163,11 @@ jobs:
 
       - name: Install chart-testing
         uses: helm/chart-testing-action@afea100a513515fbd68b0e72a7bb0ae34cb62aec 
-
+      - name: Add Helm Repos
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add k8s-at-home https://k8s-at-home.com/charts
+          helm repo update
       - name: Run chart install
         env:
           CT_HELM_EXTRA_ARGS: '--timeout 500s --debug'
