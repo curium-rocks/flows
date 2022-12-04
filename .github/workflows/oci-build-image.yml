@@ -29,6 +29,12 @@ on:
         type: string
         required: false
         default: 'ghcr.io/curium-rocks'
+      push_in_pr:
+        type: boolean
+        required: false
+        default: false
+        description: |
+          If true, images will be pushed in PRs
 
 jobs:
   build-image:
@@ -127,7 +133,7 @@ jobs:
         with:
           sarif_file: 'scan-results.sarif'
       - name: Push image
-        if: github.event_name != 'pull_request'
+        if: ${{ github.event_name != 'pull_request' || inputs.push_in_pr }}
         id: push
         timeout-minutes: 60
         uses: docker/build-push-action@175d02bffea74695e96b351069ac938b338802f9
