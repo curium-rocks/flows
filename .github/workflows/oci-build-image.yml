@@ -16,6 +16,11 @@ on:
         default: ''
         description: |
           If provided, the name of a artifact that will be downloaded prior to building the dockerfile
+      download_artifact_path:
+        type: string
+        required: false
+        description: |
+          If provided, the path to where the artifact will be downloaded
       image_name:
         type: string
         required: true
@@ -87,6 +92,7 @@ jobs:
         if: ${{ inputs.download_artifact != '' }}
         with:
           name: ${{ inputs.download_artifact }}
+          path: ${{ inputs.download_artifact_path }}
       - name: Display structure before build
         run: ls -R
       - name: Build Docker image
