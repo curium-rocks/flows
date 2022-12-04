@@ -43,9 +43,9 @@ jobs:
         uses: actions/checkout@v3
       - name: Install cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@c6d50c2e98b401591ef0ec04be0868d8f2626d0f
+        uses: sigstore/cosign-installer@7bca8b41164994a7dc93749d266e2f1db492f8a2
         with:
-          cosign-release: 'v1.12.0'
+          cosign-release: 'v1.13.1'
       # for multi arch container builds
       - name: Set up QEMU
         uses: docker/setup-qemu-action@master
@@ -54,10 +54,10 @@ jobs:
       - name: Setup Docker buildx
         id: buildx
         timeout-minutes: 4
-        uses: docker/setup-buildx-action@95cb08cb2672c73d4ffd2f422e6d11953d2a9c70
+        uses: docker/setup-buildx-action@39a1a82492fd1ad19af19d61b5f748e4cb6cd1af
       - name: Log into registry
         timeout-minutes: 5
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        uses: docker/login-action@f75d088332b07a08afadf6ac53c74509b9453f12
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -70,7 +70,7 @@ jobs:
       - name: Extract Docker metadata
         id: meta
         timeout-minutes: 5
-        uses: docker/metadata-action@12cce9efe0d49980455aaaca9b071c0befcdd702
+        uses: docker/metadata-action@314ddf6d4a82333bf1bc7630399df41bf68eba09
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
@@ -90,7 +90,7 @@ jobs:
       - name: Build Docker image
         id: build
         timeout-minutes: 25
-        uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5
+        uses: docker/build-push-action@175d02bffea74695e96b351069ac938b338802f9
         with:
           context: .
           load: true
@@ -122,7 +122,7 @@ jobs:
         if: github.event_name != 'pull_request'
         id: push
         timeout-minutes: 60
-        uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5
+        uses: docker/build-push-action@175d02bffea74695e96b351069ac938b338802f9
         with:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
