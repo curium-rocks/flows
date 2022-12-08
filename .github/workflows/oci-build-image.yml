@@ -35,6 +35,10 @@ on:
         default: false
         description: |
           If true, images will be pushed in PRs
+    outputs:
+      sha_tag:
+        description: "SHA tag for the image built"
+        value: ${{ jobs.build-image.outputs.sha_tag }}
 
 jobs:
   build-image:
@@ -48,6 +52,8 @@ jobs:
       packages: write
       id-token: write
       security-events: write
+    outputs:
+      sha_tag: ${{ steps.short-sha.outputs.sha_tag }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -117,8 +123,8 @@ jobs:
         id: short-sha
         run: |
           export SHORT_SHA=$(git rev-parse --short HEAD)
-          echo "::set-output name=sha_short::$SHORT_SHA"
-          echo "::set-output name=sha_tag::${{ env.REGISTRY}}/${{ env.IMAGE_NAME }}:sha-$SHORT_SHA"
+          echo "sha_short=$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "sha_tag=${{ env.REGISTRY}}/${{ env.IMAGE_NAME }}:sha-$SHORT_SHA" >> $GITHUB_OUTPUT
         
       - name: Scan image
         id: scan
