@@ -1,6 +1,11 @@
 name: Node Typescript QA
 on: 
   workflow_call:
+    inputs:
+      continue-on-prod-vulns:
+        default: false
+        type: boolean
+        description: 'Whether to fail the job or continue when vulnerabilities are found in production dependencies'
     secrets:
       SONARQUBE_KEY:
         required: true
@@ -46,6 +51,7 @@ jobs:
       - run: npm run build --if-present
       - run: npm run lint --if-present
       - run: npm audit --omit dev
+        continue-on-error: ${{ inputs.continue-on-prod-vulns }}
       - run: npm test
       - uses: actions/upload-artifact@v3
         if: ${{ matrix.node-version == '16.x' }}
