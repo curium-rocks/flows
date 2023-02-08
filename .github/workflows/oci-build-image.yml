@@ -114,7 +114,7 @@ jobs:
       - name: Build Docker image
         id: build
         timeout-minutes: 25
-        uses: docker/build-push-action@a3f7a443f9ce2ce95386813fe5a4f20179fe03f2
+        uses: docker/build-push-action@fd7264830aac65c397f54f1eb1d5fd13eb3acbe7
         with:
           context: .
           load: true
@@ -148,7 +148,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' || inputs.push_in_pr }}
         id: push
         timeout-minutes: 60
-        uses: docker/build-push-action@a3f7a443f9ce2ce95386813fe5a4f20179fe03f2
+        uses: docker/build-push-action@fd7264830aac65c397f54f1eb1d5fd13eb3acbe7
         with:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
