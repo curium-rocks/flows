@@ -64,7 +64,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Install cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@651c379c48edaff4ae5b42cb7430c705698e85f2
+        uses: sigstore/cosign-installer@bd2d1189b064bcddc3903176a807dcdba72d7fd0
         with:
           cosign-release: 'v1.13.1'
       # for multi arch container builds
@@ -75,10 +75,10 @@ jobs:
       - name: Setup Docker buildx
         id: buildx
         timeout-minutes: 4
-        uses: docker/setup-buildx-action@c252a3bb80dae98127b9329b8aa1ff35b71ae980
+        uses: docker/setup-buildx-action@4b4e9c3e2d4531116a6f8ba8e71fc6e2cb6e6c8c
       - name: Log into registry
         timeout-minutes: 5
-        uses: docker/login-action@bc135a1993a1d0db3e9debefa0cfcb70443cc94c
+        uses: docker/login-action@ec9cdf07d570632daeb912f5b2099cb9ec1d01e6
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -91,7 +91,7 @@ jobs:
       - name: Extract Docker metadata
         id: meta
         timeout-minutes: 5
-        uses: docker/metadata-action@c98ac5e987c125fe23d39b3cecb9ac130a108e27
+        uses: docker/metadata-action@3343011071fa59c64a174cc6aa415dc13b31b7b2
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
@@ -114,7 +114,7 @@ jobs:
       - name: Build Docker image
         id: build
         timeout-minutes: 25
-        uses: docker/build-push-action@4eb68bb2ac65309f0a26ed9abf968f9ea36bd29f
+        uses: docker/build-push-action@35434f557ad77672899d67f7992fb5560bda1071
         with:
           context: .
           load: true
@@ -148,7 +148,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' || inputs.push_in_pr }}
         id: push
         timeout-minutes: 60
-        uses: docker/build-push-action@4eb68bb2ac65309f0a26ed9abf968f9ea36bd29f
+        uses: docker/build-push-action@35434f557ad77672899d67f7992fb5560bda1071
         with:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
