@@ -28,7 +28,7 @@ jobs:
         with:
           python-version: 3.7
       - name: Install chart-testing
-        uses: helm/chart-testing-action@a153a59efc9083c9bb62918572df0f698d8e293b
+        uses: helm/chart-testing-action@e8788873172cb653a90ca2e819d79d65a66d4e76
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
@@ -162,7 +162,7 @@ jobs:
         run: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 
       - name: Install chart-testing
-        uses: helm/chart-testing-action@a153a59efc9083c9bb62918572df0f698d8e293b 
+        uses: helm/chart-testing-action@e8788873172cb653a90ca2e819d79d65a66d4e76 
       - name: Add Helm Repos
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
