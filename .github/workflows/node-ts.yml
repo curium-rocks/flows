@@ -41,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16.x,18.x]
+        node-version: [16.x,18.x,20.x]
     steps:
       - name: Checkout
         uses: actions/checkout@27135e314dd1818f797af1db9dae03a9f045786b
