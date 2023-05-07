@@ -2,6 +2,10 @@ name: Node Typescript QA
 on: 
   workflow_call:
     inputs:
+      node_versions:
+        default: '{"node-version": ["16.x","18.x","20.x"]}'
+        type: string
+        required: false
       continue-on-prod-vulns:
         default: false
         type: boolean
@@ -40,8 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        node-version: [16.x,18.x,20.x]
+      matrix: ${{ fromJSON( inputs.node_versions ) }}
     steps:
       - name: Checkout
         uses: actions/checkout@f095bcc56b7c2baf48f3ac70d6d6782f4f553222
