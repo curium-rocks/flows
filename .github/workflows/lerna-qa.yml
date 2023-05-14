@@ -14,10 +14,6 @@ on:
         default: main
         type: string
         description: The default/main branch
-    secrets:
-      SONARQUBE_KEY:
-        required: true
-        description: Sonarcloud key
 jobs:
   analyze:
     name: Analyze
