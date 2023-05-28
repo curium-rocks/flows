@@ -62,6 +62,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - name: Install cosign
         if: github.event_name != 'pull_request'
         uses: sigstore/cosign-installer@84448ba515b2a5ac9853582a471184394c67631b
