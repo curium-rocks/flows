@@ -15,12 +15,22 @@ on:
         default: documentation
         type: string
         required: false
+      node_version:
+        default: 18.x
+        type: string
+        required: false
 jobs:
   publish-docs: 
     name: Publish Docs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
       - name: Build Docs
         run: npm run ${{ inputs.doc_build_task }}
       - name: Setup Pages
