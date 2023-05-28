@@ -33,6 +33,12 @@ jobs:
       - run: npm ci
       - name: Build Docs
         run: npm run ${{ inputs.build_task }}
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ inputs.path}}
+          path: |
+            ${{ inputs.path }}
       - name: Setup Pages
         if: ${{ inputs.publish }}
         uses: actions/configure-pages@v3
