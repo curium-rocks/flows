@@ -65,16 +65,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        if: ${{ secrets.clone_token != null }}
+        if: env.GH_TOKEN
         uses: actions/checkout@v3
         with:
           submodules: recursive
           token: ${{ secrets.clone_token }}
+        env:
+          GH_TOKEN: ${{ secrets.clone_token }}
       - name: Checkout repository
-        if: ${{ secrets.clone_token == null }}
+        if: ${{ !env.GH_TOKEN }}
         uses: actions/checkout@v3
         with:
           submodules: recursive
+        env:
+          GH_TOKEN: ${{ secrets.clone_token }}
       - name: Install cosign
         if: github.event_name != 'pull_request'
         uses: sigstore/cosign-installer@84448ba515b2a5ac9853582a471184394c67631b

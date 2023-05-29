@@ -12,16 +12,20 @@ jobs:
       - name: Install K3D
         run: wget -q -O - https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
       - name: Checkout repository
-        if: ${{ secrets.clone_token != null }}
+        if: env.GH_TOKEN
         uses: actions/checkout@v3
         with:
           submodules: recursive
           token: ${{ secrets.clone_token }}
+        env:
+          GH_TOKEN: ${{ secrets.clone_token }}
       - name: Checkout repository
-        if: ${{ secrets.clone_token == null }}
+        if: ${{ !env.GH_TOKEN }}
         uses: actions/checkout@v3
         with:
           submodules: recursive
+        env:
+          GH_TOKEN: ${{ secrets.clone_token }}
       - name: Start K3D
         run: k3d cluster create test-cluster
       
