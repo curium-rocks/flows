@@ -10,6 +10,7 @@ on:
         default: false
         type: boolean
         description: 'Whether to fail the job or continue when vulnerabilities are found in production dependencies'
+      
     secrets:
       SONARQUBE_KEY:
         required: true

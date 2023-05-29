@@ -34,5 +34,7 @@ jobs:
           sudo install skaffold /usr/local/bin/
       - name: Skaffold Run
         run: skaffold run
+      - name: Create build.artifacts
+        run: skaffold build -q > build.artifacts
       - name: Skaffold Verify
-        run: skaffold verify
+        run: skaffold verify -a build.artifacts
