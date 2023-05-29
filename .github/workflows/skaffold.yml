@@ -32,9 +32,9 @@ jobs:
         run: |
           curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64 && \
           sudo install skaffold /usr/local/bin/
-      - name: Skaffold Run
-        run: skaffold run
-      - name: Create build.artifacts
-        run: skaffold build -q > build.artifacts
+      - name: Skaffold Build
+        run: skaffold build --quiet=true > build.artifacts
+      - name: Skaffold Deploy
+        run: skaffold deploy -a build.artifacts
       - name: Skaffold Verify
         run: skaffold verify -a build.artifacts
