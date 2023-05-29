@@ -8,6 +8,9 @@ on:
 jobs:
   validate-services:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Install K3D
         run: wget -q -O - https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
@@ -32,6 +35,17 @@ jobs:
         run: |
           curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64 && \
           sudo install skaffold /usr/local/bin/
+      - name: Log into registry
+        timeout-minutes: 5
+        uses: docker/login-action@40891eba8c2bcd1309b07ba8b11232f313e86779
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Pull Secret in K3D
+        run: kubectl create secret docker-registry regcred --docker-username=bryopsida --docker-password=$GITHUB_TOKEN --docker-server=ghcr.io
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Skaffold Build
         run: skaffold build --quiet=true > build.artifacts
       - name: Skaffold Deploy
