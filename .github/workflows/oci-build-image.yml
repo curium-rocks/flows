@@ -151,7 +151,7 @@ jobs:
           format: 'sarif'
           output: 'scan-results.sarif'
       - name: Upload Container Scan SARIF report
-        if: ${{ env.CODEQL_ENABLED }}
+        if: ${{ inputs.codeql_enabled }}
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: 'scan-results.sarif'
