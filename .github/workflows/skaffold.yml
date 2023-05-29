@@ -2,7 +2,7 @@ name: Validate Services
 on:
   workflow_call:
     secrets:
-      clone_pat:
+      clone_token:
         required: false
         description: A PAT that will be used when cloning
 jobs:
@@ -11,10 +11,17 @@ jobs:
     steps:
       - name: Install K3D
         run: wget -q -O - https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        if: ${{ secrets.clone_token != null }}
+        uses: actions/checkout@v3
         with:
           submodules: recursive
-          token: ${{ secrets.clone_pat }}
+          token: ${{ secrets.clone_token }}
+      - name: Checkout repository
+        if: ${{ secrets.clone_token == null }}
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - name: Start K3D
         run: k3d cluster create test-cluster
       

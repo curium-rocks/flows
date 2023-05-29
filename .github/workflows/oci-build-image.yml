@@ -46,9 +46,6 @@ on:
       clone_token:
         required: false
         description: PAT to use to clone
-      clone_ssh_key:
-        required: false
-        description: SSH private key to use for authentication when cloning
 
 jobs:
   build-image:
@@ -68,11 +65,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
+        if: ${{ secrets.clone_token != null }}
         uses: actions/checkout@v3
         with:
           submodules: recursive
           token: ${{ secrets.clone_token }}
-          ssh-key: ${{ secrets.clone_ssh_key }}
+      - name: Checkout repository
+        if: ${{ secrets.clone_token == null }}
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - name: Install cosign
         if: github.event_name != 'pull_request'
         uses: sigstore/cosign-installer@84448ba515b2a5ac9853582a471184394c67631b
