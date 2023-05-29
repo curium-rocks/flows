@@ -42,6 +42,13 @@ on:
       build_tag:
         description: "Build tag, this is unique tag for this build, it does not include the registry and image repository"
         value: ${{ jobs.build-image.outputs.build_tag }}
+    secrets:
+      clone_token:
+        required: false
+        description: PAT to use to clone
+      clone_ssh_key:
+        required: false
+        description: SSH private key to use for authentication when cloning
 
 jobs:
   build-image:
@@ -64,6 +71,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: recursive
+          token: ${{ secrets.clone_token }}
+          ssh-key: ${{ secrets.clone_ssh_key }}
       - name: Install cosign
         if: github.event_name != 'pull_request'
         uses: sigstore/cosign-installer@84448ba515b2a5ac9853582a471184394c67631b
