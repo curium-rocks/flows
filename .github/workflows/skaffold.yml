@@ -1,6 +1,12 @@
 name: Validate Services
 on:
   workflow_call:
+    inputs:
+      build_manifest_path:
+        type: string
+        default: build.artifacts.json
+        required: false
+        description: Manifest of the images used, this is feed into deploy and verify tasks
     secrets:
       clone_token:
         required: false
@@ -47,9 +53,7 @@ jobs:
         run: kubectl create secret docker-registry regcred --docker-username=bryopsida --docker-password=$GITHUB_TOKEN --docker-server=ghcr.io
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Skaffold Build
-        run: skaffold build --quiet=true > build.artifacts
       - name: Skaffold Deploy
-        run: skaffold deploy -a build.artifacts
+        run: skaffold deploy -a ${{ inputs.build_manifest_path }}
       - name: Skaffold Verify
-        run: skaffold verify -a build.artifacts
+        run: skaffold verify -a ${{ inputs.build_manifest_path }}
