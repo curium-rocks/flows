@@ -28,4 +28,11 @@ jobs:
           GH_TOKEN: ${{ secrets.clone_token }}
       - name: Start K3D
         run: k3d cluster create test-cluster
-      
+      - name: Install Skaffold
+        run: |
+          curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64 && \
+          sudo install skaffold /usr/local/bin/
+      - name: Skaffold Run
+        run: skaffold run
+      - name: Skaffold Verify
+        run: skaffold verify
