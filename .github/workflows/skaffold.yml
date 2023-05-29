@@ -7,6 +7,7 @@ on:
         description: A PAT that will be used when cloning
 jobs:
   validate-services:
+    name: Validate
     runs-on: ubuntu-latest
     permissions:
       contents: read
