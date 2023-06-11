@@ -1,0 +1,59 @@
+name: NPM Publish
+on: 
+  workflow_call:
+    inputs:
+      node_version:
+        default: '{"node-version": ["20.x"]}'
+        type: string
+        required: false
+      continue-on-prod-vulns:
+        default: false
+        type: boolean
+        description: 'Whether to fail the job or continue when vulnerabilities are found in production dependencies'
+      publish-docs:
+        type: boolean
+        default: true
+        description: 'Whether to publish docs to github page'
+        required: false
+      docs-path:
+        type: string
+        default: documentation
+        required: false
+    secrets:
+      NPM_TOKEN:
+        description: 'A token with push permission to npm'
+        required: true
+jobs:
+  publish:
+    name: Publish Release
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node_version }}
+          cache: 'npm'
+      - shell: bash
+        run: npm ci
+      - shell: bash
+        run: npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN}}
+        env:
+          NODE_ACCESS_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - shell: bash
+        run: npm publish --access public
+      - if: ${{ inputs.publish-docs }}
+        shell: bash
+        run: npm run build:docs
+      - if: ${{ inputs.publish-docs }}
+        name: Setup Pages
+        uses: actions/configure-pages@v3
+      - if: ${{ inputs.publish-docs }}
+        name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: '${{ inputs.docs-path }}'
+      - if: ${{ inputs.publish-docs == 'true' }}
+        name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
