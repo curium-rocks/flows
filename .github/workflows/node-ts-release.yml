@@ -3,7 +3,7 @@ on:
   workflow_call:
     inputs:
       node_version:
-        default: '{"node-version": ["20.x"]}'
+        default: '20.x'
         type: string
         required: false
       continue-on-prod-vulns:
