@@ -81,7 +81,7 @@ jobs:
           GH_TOKEN: ${{ secrets.clone_token }}
       - name: Install cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@1a22e17968bb5f9192b82a39d3ffb322627f5169
+        uses: sigstore/cosign-installer@ef0e9691595ea19ec990a46b1a591dcafe568f34
         with:
           cosign-release: 'v1.13.1'
       # for multi arch container builds
@@ -92,10 +92,10 @@ jobs:
       - name: Setup Docker buildx
         id: buildx
         timeout-minutes: 4
-        uses: docker/setup-buildx-action@95cefc3c57c7e2ae63996b332541b8a2808e4348
+        uses: docker/setup-buildx-action@bdd549bec0b79f87fdf6064e966f34404a39cc33
       - name: Log into registry
         timeout-minutes: 5
-        uses: docker/login-action@40891eba8c2bcd1309b07ba8b11232f313e86779
+        uses: docker/login-action@465a07811f14bebb1938fbed4728c6a1ff8901fc
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -108,7 +108,7 @@ jobs:
       - name: Extract Docker metadata
         id: meta
         timeout-minutes: 5
-        uses: docker/metadata-action@dbbf01822bb698575d92e1ee5b9229d58745b0c6
+        uses: docker/metadata-action@2c0bd771b40637d97bf205cbccdd294a32112176
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
@@ -131,7 +131,7 @@ jobs:
       - name: Build Docker image
         id: build
         timeout-minutes: 25
-        uses: docker/build-push-action@f9efed53cc1b0364ba947400ac02042bbbaac7fc
+        uses: docker/build-push-action@44ea916f6c540f9302d50c2b1e5a8dc071f15cdf
         with:
           context: .
           load: true
@@ -165,7 +165,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' || inputs.push_in_pr }}
         id: push
         timeout-minutes: 60
-        uses: docker/build-push-action@f9efed53cc1b0364ba947400ac02042bbbaac7fc
+        uses: docker/build-push-action@44ea916f6c540f9302d50c2b1e5a8dc071f15cdf
         with:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
