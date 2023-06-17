@@ -12,6 +12,11 @@ on:
         default: ''
         type: string
         description: 'A collection of --sets for ct'
+      ct_extra_args:
+        required: false
+        default: ''
+        type: string
+        description: 'Extra args to pass to the chart testing tool'
 jobs:
   lint-chart:
     runs-on: ubuntu-latest
@@ -171,4 +176,4 @@ jobs:
       - name: Run chart install
         env:
           CT_HELM_EXTRA_ARGS: '--timeout 500s --debug'
-        run: ct install --chart-dirs ${{ inputs.charts_dir }} --target-branch ${{ github.event.repository.default_branch }} --helm-extra-set-args "${{ inputs.helm_extra_sets }}" --debug
+        run: ct install --chart-dirs ${{ inputs.charts_dir }} --target-branch ${{ github.event.repository.default_branch }} --helm-extra-set-args "${{ inputs.helm_extra_sets }}" --debug ${{ inputs.ct_extra_args }}
