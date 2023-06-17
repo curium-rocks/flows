@@ -104,7 +104,6 @@ jobs:
         id: default-branch
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          "{name}={value}" >> $GITHUB_OUTPUT
         run: echo "name=$(gh repo view --json defaultBranchRef --jq .defaultBranchRef.name) >> $GITHUB_OUTPUT"
       - name: Extract Docker metadata
         id: meta
