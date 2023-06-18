@@ -45,6 +45,7 @@ jobs:
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm repo add k8s-at-home https://k8s-at-home.com/charts
+          helm repo add groundhog2k https://groundhog2k.github.io/helm-charts/
           helm repo update
       - name: Run chart-testing (lint)
         run: ct lint --chart-dirs ${{ inputs.charts_dir }} --target-branch ${{ github.event.repository.default_branch }}
