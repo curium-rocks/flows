@@ -7,6 +7,16 @@ on:
         default: build.artifacts.json
         required: false
         description: Manifest of the images used, this is feed into deploy and verify tasks
+      pre_deploy_make_targets:
+        type: string
+        default: ''
+        required: false
+        description: A set of make targets to execute in the repo before running skaffold deploy
+      post_deploy_make_targets:
+        type: string
+        default: ''
+        required: false
+        description: A set of make targets to execute post deploy and verify
     secrets:
       clone_token:
         required: false
@@ -53,7 +63,13 @@ jobs:
         run: kubectl create secret docker-registry regcred --docker-username=bryopsida --docker-password=$GITHUB_TOKEN --docker-server=ghcr.io
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run Pre-Deploy Tasks
+        if: ${{ inputs.pre_deploy_make_targets != '' }}
+        run: make ${{ inputs.pre_deploy_make_targets }}
       - name: Skaffold Deploy
         run: skaffold deploy -a ${{ inputs.build_manifest_path }}
       - name: Skaffold Verify
         run: skaffold verify -a ${{ inputs.build_manifest_path }}
+      - name: Run Post-Deploy Tasks
+        if: ${{ inputs.post_deploy_make_targets != '' }}
+        run: make ${{ inputs.post_deploy_make_targets }}
