@@ -2,8 +2,12 @@ name: Node Typescript QA
 on: 
   workflow_call:
     inputs:
+      os:
+        default: '["ubuntu-latest"]'
+        type: string
+        required: false
       node_versions:
-        default: '{"node-version": ["16.x","18.x","20.x"]}'
+        default: '["16.x","18.x","20.x"]'
         type: string
         required: false
       continue-on-prod-vulns:
@@ -42,10 +46,12 @@ jobs:
 
   build-and-test:
     name: Build And Test
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix: ${{ fromJSON( inputs.node_versions ) }}
+      matrix:
+        node-version: ${{ fromJSON( inputs.node_versions ) }}
+        os: ${{ fromJson( inputs.os ) }}
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@96f53100ba2a5449eb71d2e6604bbcd94b9449b5
