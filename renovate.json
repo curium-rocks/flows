@@ -2,5 +2,6 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "baseBranches": ["main"],
   "labels": ["dependencies"],
+  "dependencyDashboard": true,
   "automerge": true
 }
