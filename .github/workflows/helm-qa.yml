@@ -47,6 +47,7 @@ jobs:
           helm repo add k8s-at-home https://k8s-at-home.com/charts
           helm repo add groundhog2k https://groundhog2k.github.io/helm-charts/
           helm repo add psa https://bryopsida.github.io/psa-restricted-patcher/
+          helm repo add couchdb https://apache.github.io/couchdb-helm/
           helm repo update
       - name: Run chart-testing (lint)
         run: ct lint --chart-dirs ${{ inputs.charts_dir }} --target-branch ${{ github.event.repository.default_branch }}
@@ -120,6 +121,7 @@ jobs:
           helm repo add k8s-at-home https://k8s-at-home.com/charts
           helm repo add groundhog2k https://groundhog2k.github.io/helm-charts/
           helm repo add psa https://bryopsida.github.io/psa-restricted-patcher/
+          helm repo add couchdb https://apache.github.io/couchdb-helm/
 
 
           # Compute required kubernetes api versions
@@ -180,6 +182,7 @@ jobs:
           helm repo add k8s-at-home https://k8s-at-home.com/charts
           helm repo add groundhog2k https://groundhog2k.github.io/helm-charts/
           helm repo add psa https://bryopsida.github.io/psa-restricted-patcher/
+          helm repo add couchdb https://apache.github.io/couchdb-helm/
           helm repo update
       - name: Run chart install
         env:
