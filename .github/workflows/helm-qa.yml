@@ -140,7 +140,7 @@ jobs:
           # validate charts
           for CHART_DIR in ${CHART_DIRS}; do
             (cd ${{ inputs.charts_dir }}/${CHART_DIR}; helm dependency build)
-            helm template \
+            helm template --kube-version=${{ matrix.k8s }} \
               $apis \
               ${{ inputs.charts_dir }}/"${CHART_DIR}" | kubeval \
                 --strict \
