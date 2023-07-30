@@ -90,6 +90,10 @@ jobs:
         uses: actions/checkout@96f53100ba2a5449eb71d2e6604bbcd94b9449b5
         with:
           fetch-depth: 0
+      - uses: azure/setup-kubectl@v3
+        with:
+          version: ${{ matrix.k8s }}
+        id: install
       - name: Run kubeval
         env:
           KUBERNETES_VERSION: ${{ matrix.k8s }}
