@@ -59,7 +59,7 @@ jobs:
         uses: actions/checkout@96f53100ba2a5449eb71d2e6604bbcd94b9449b5
       - name: Run helm-docs
         run: |
-          docker run --rm --volume "$$PWD:/helm-docs" jnorwood/helm-docs:latest
+          docker run --rm --volume "$PWD:/helm-docs" jnorwood/helm-docs:latest
           git diff --exit-code
   kubeval-chart:
     runs-on: ubuntu-latest
