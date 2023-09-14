@@ -33,7 +33,7 @@ jobs:
         run: wget -q -O - https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
       - name: Checkout repository
         if: env.GH_TOKEN
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
           token: ${{ secrets.clone_token }}
@@ -41,7 +41,7 @@ jobs:
           GH_TOKEN: ${{ secrets.clone_token }}
       - name: Checkout repository
         if: ${{ !env.GH_TOKEN }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
         env:
