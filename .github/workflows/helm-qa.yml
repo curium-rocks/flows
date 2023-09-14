@@ -70,6 +70,7 @@ jobs:
       fail-fast: false
       matrix:
         k8s:
+          - v1.28.0
           - v1.27.0
           - v1.26.0
           - v1.25.5
@@ -149,6 +150,7 @@ jobs:
       fail-fast: false
       matrix:
         k8s:
+          - v1.28.0
           - v1.27.0
           - v1.26.0
           - v1.25.3
