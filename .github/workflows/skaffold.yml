@@ -54,7 +54,7 @@ jobs:
           sudo install skaffold /usr/local/bin/
       - name: Log into registry
         timeout-minutes: 5
-        uses: docker/login-action@b4bedf8053341df3b5a9f9e0f2cf4e79e27360c6
+        uses: docker/login-action@3d58c274f17dffee475a5520cbe67f0a882c4dbb
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
