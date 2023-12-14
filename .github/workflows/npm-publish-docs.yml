@@ -34,7 +34,7 @@ jobs:
       - name: Build Docs
         run: npm run ${{ inputs.build_task }}
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.path}}
           path: |

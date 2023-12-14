@@ -31,7 +31,7 @@ jobs:
       - run: npm audit --omit dev
         continue-on-error: ${{ inputs.continue-on-prod-vulns }}
       - run: npm test
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ matrix.node-version == '16.x' }}
         with:
           name: coverage
