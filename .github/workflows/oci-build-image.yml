@@ -3,6 +3,11 @@ name: Build Image
 on:
   workflow_call:
     inputs:
+      context:
+        type: string
+        required: false
+        default: '.'
+        description: 'The image build context path'
       codeql_enabled:
         type: boolean
         required: false
@@ -133,7 +138,7 @@ jobs:
         timeout-minutes: 25
         uses: docker/build-push-action@9f6f8c940b91232557f8699b21341a08624a8dce
         with:
-          context: .
+          context: ${{ inputs.context }}
           load: true
           push: false
           tags: ${{ steps.meta.outputs.tags }}
@@ -167,7 +172,7 @@ jobs:
         timeout-minutes: 60
         uses: docker/build-push-action@9f6f8c940b91232557f8699b21341a08624a8dce
         with:
-          context: .
+          context: ${{ inputs.context }}
           builder: ${{ steps.buildx.outputs.name }}
           load: false
           push: true
