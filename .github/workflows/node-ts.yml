@@ -71,6 +71,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+          cache-dependency-path: ${{ inputs.working-dir }}/package-lock.json
       - run: npm ci
         working-directory: ${{ inputs.working-dir }}
       - run: npm run build --if-present
