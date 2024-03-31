@@ -24,9 +24,9 @@ jobs:
     name: Publish Docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ inputs.node_version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node_version }}
           cache: 'npm'
@@ -34,20 +34,20 @@ jobs:
       - name: Build Docs
         run: npm run ${{ inputs.build_task }}
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.path}}
           path: |
             ${{ inputs.path }}
       - name: Setup Pages
         if: ${{ inputs.publish }}
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v4
       - name: Upload artifact
         if: ${{ inputs.publish }}
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: '${{ inputs.path }}'
       - name: Deploy to GitHub Pages
         if: ${{ inputs.publish }}
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4

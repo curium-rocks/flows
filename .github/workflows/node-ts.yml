@@ -36,18 +36,18 @@ jobs:
       security-events: write
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Install native dependencies
       run: |
         sudo apt-get install libavahi-compat-libdnssd-dev
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v3
       with:
         languages: 'javascript'
     - name: Autobuild
-      uses: github/codeql-action/autobuild@v2
+      uses: github/codeql-action/autobuild@v3
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@v3
       with:
         category: "/language:javascript"
 
@@ -61,13 +61,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@96f53100ba2a5449eb71d2e6604bbcd94b9449b5
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
       - name: Install native dependencies
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
           sudo apt-get install libavahi-compat-libdnssd-dev
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -81,8 +81,7 @@ jobs:
         continue-on-error: ${{ inputs.continue-on-prod-vulns }}
         working-directory: ${{ inputs.working-dir }}
       - run: npm test
-        working-directory: ${{ inputs.working-dir }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ matrix.node-version == '16.x' }}
         with:
           name: coverage
@@ -95,10 +94,10 @@ jobs:
     needs:
     - build-and-test
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: coverage
         path: coverage

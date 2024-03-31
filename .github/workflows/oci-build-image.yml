@@ -3,6 +3,11 @@ name: Build Image
 on:
   workflow_call:
     inputs:
+      context:
+        type: string
+        required: false
+        default: '.'
+        description: 'The image build context path'
       codeql_enabled:
         type: boolean
         required: false
@@ -66,7 +71,7 @@ jobs:
     steps:
       - name: Checkout repository
         if: env.GH_TOKEN
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
           token: ${{ secrets.clone_token }}
@@ -74,14 +79,14 @@ jobs:
           GH_TOKEN: ${{ secrets.clone_token }}
       - name: Checkout repository
         if: ${{ !env.GH_TOKEN }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
         env:
           GH_TOKEN: ${{ secrets.clone_token }}
       - name: Install cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@6e04d228eb30da1757ee4e1dd75a0ec73a653e06
+        uses: sigstore/cosign-installer@e1523de7571e31dbe865fd2e80c5c7c23ae71eb4
         with:
           cosign-release: 'v1.13.1'
       # for multi arch container builds
@@ -92,10 +97,10 @@ jobs:
       - name: Setup Docker buildx
         id: buildx
         timeout-minutes: 4
-        uses: docker/setup-buildx-action@4c0219f9ac95b02789c1075625400b2acbff50b1
+        uses: docker/setup-buildx-action@edfb0fe6204400c56fbfd3feba3fe9ad1adfa345
       - name: Log into registry
         timeout-minutes: 5
-        uses: docker/login-action@a9794064588be971151ec5e7144cb535bcb56e36
+        uses: docker/login-action@3d58c274f17dffee475a5520cbe67f0a882c4dbb
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -108,7 +113,7 @@ jobs:
       - name: Extract Docker metadata
         id: meta
         timeout-minutes: 5
-        uses: docker/metadata-action@35e9aff4f5d665b5aa8a8f2adffaf8a1b5f49cc0
+        uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
@@ -121,7 +126,7 @@ jobs:
             type=sha
             type=raw,value={{date 'YYYYMMDD'}}-{{sha}}
       - name: Download Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         if: ${{ inputs.download_artifact != '' }}
         with:
           name: ${{ inputs.download_artifact }}
@@ -131,9 +136,9 @@ jobs:
       - name: Build Docker image
         id: build
         timeout-minutes: 25
-        uses: docker/build-push-action@4fad532b9fdbfb80f436784834374a1c11834153
+        uses: docker/build-push-action@4976231911ebf5f32aad765192d35f942aa48cb8
         with:
-          context: .
+          context: ${{ inputs.context }}
           load: true
           push: false
           tags: ${{ steps.meta.outputs.tags }}
@@ -158,16 +163,16 @@ jobs:
           output: 'scan-results.sarif'
       - name: Upload Container Scan SARIF report
         if: ${{ inputs.codeql_enabled }}
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'scan-results.sarif'
       - name: Push image
         if: ${{ github.event_name != 'pull_request' || inputs.push_in_pr }}
         id: push
         timeout-minutes: 60
-        uses: docker/build-push-action@4fad532b9fdbfb80f436784834374a1c11834153
+        uses: docker/build-push-action@4976231911ebf5f32aad765192d35f942aa48cb8
         with:
-          context: .
+          context: ${{ inputs.context }}
           builder: ${{ steps.buildx.outputs.name }}
           load: false
           push: true
