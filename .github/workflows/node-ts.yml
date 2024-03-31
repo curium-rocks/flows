@@ -82,6 +82,7 @@ jobs:
         continue-on-error: ${{ inputs.continue-on-prod-vulns }}
         working-directory: ${{ inputs.working-dir }}
       - run: npm test
+        working-directory: ${{ inputs.working-dir }}
       - uses: actions/upload-artifact@v4
         if: ${{ matrix.node-version == '16.x' }}
         with:
