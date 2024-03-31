@@ -24,7 +24,7 @@ on:
         required: false
     secrets:
       SONARQUBE_KEY:
-        required: true
+        required: false
         description: Sonarcloud key
 jobs:
   analyze:
