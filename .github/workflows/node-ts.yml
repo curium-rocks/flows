@@ -14,7 +14,14 @@ on:
         default: false
         type: boolean
         description: 'Whether to fail the job or continue when vulnerabilities are found in production dependencies'
-      
+      working-dir:
+        default: '.'
+        type: string
+        required: false
+      sonar-enabled:
+        default: true
+        type: boolean
+        required: false
     secrets:
       SONARQUBE_KEY:
         required: true
@@ -65,11 +72,16 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
       - run: npm ci
+        working-directory: ${{ inputs.working-dir }}
       - run: npm run build --if-present
+        working-directory: ${{ inputs.working-dir }}
       - run: npm run lint --if-present
+        working-directory: ${{ inputs.working-dir }}
       - run: npm audit --omit dev
         continue-on-error: ${{ inputs.continue-on-prod-vulns }}
+        working-directory: ${{ inputs.working-dir }}
       - run: npm test
+        working-directory: ${{ inputs.working-dir }}
       - uses: actions/upload-artifact@v3
         if: ${{ matrix.node-version == '16.x' }}
         with:
@@ -79,6 +91,7 @@ jobs:
   sonar:
     name: Sonar Scan
     runs-on: ubuntu-latest
+    if: inputs.sonar-enabled
     needs:
     - build-and-test
     steps:
