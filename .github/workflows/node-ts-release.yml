@@ -23,6 +23,14 @@ on:
         default: '.'
         type: string
         required: false
+      tag:
+        type: string
+        required: false
+        description: 'Tag to use when create-release is true'
+      create-release:
+        type: boolean
+        required: false
+        default: false
     secrets:
       NPM_TOKEN:
         description: 'A token with push permission to npm'
@@ -66,3 +74,7 @@ jobs:
         name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Create Release
+        if: ${{ inputs.create-release }}
+        run: |
+          gh release create ${{ inputs.tag }} --generate-notes
