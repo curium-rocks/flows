@@ -22,18 +22,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        uses: actions/checkout@cd7d8d697e10461458bc61a30d094dc601a8b017
         with:
           fetch-depth: 0
       - name: Install Helm
         uses: azure/setup-helm@v3.5
         with:
           version: v3.10.0
-      - uses: actions/setup-python@871daa956ca9ea99f3c3e30acb424b7960676734
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d
         with:
           python-version: 3.7
       - name: Install chart-testing
-        uses: helm/chart-testing-action@df9dfa7259f5d09615a31c4aae53338e2c621f8f
+        uses: helm/chart-testing-action@dbd7bf1354f0f25564f602276d44cb17913e0f9f
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
@@ -56,7 +56,7 @@ jobs:
     needs: lint-chart
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        uses: actions/checkout@cd7d8d697e10461458bc61a30d094dc601a8b017
       - name: Run helm-docs
         run: |
           docker run --rm --volume "$PWD:/helm-docs" jnorwood/helm-docs:latest
@@ -78,10 +78,10 @@ jobs:
           - v1.23.15
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        uses: actions/checkout@cd7d8d697e10461458bc61a30d094dc601a8b017
         with:
           fetch-depth: 0
-      - uses: azure/setup-kubectl@v3
+      - uses: azure/setup-kubectl@v4
         with:
           version: ${{ matrix.k8s }}
         id: install
@@ -158,11 +158,11 @@ jobs:
           - v1.23.13
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 
+        uses: actions/checkout@cd7d8d697e10461458bc61a30d094dc601a8b017 
         with:
           fetch-depth: 0
       - name: Create kind ${{ matrix.k8s }} cluster
-        uses: helm/kind-action@4be822c96b3a80076fb61a4e54a4e89d8d79c9c6 
+        uses: helm/kind-action@e89fbc4770626936aff83e4c6d7cbb45dd44ec90 
         with:
           node_image: kindest/node:${{ matrix.k8s }}
           version: v0.17.0 
@@ -171,7 +171,7 @@ jobs:
         run: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 
       - name: Install chart-testing
-        uses: helm/chart-testing-action@df9dfa7259f5d09615a31c4aae53338e2c621f8f 
+        uses: helm/chart-testing-action@dbd7bf1354f0f25564f602276d44cb17913e0f9f 
       - name: Add Helm Repos
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami

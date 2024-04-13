@@ -41,7 +41,7 @@ jobs:
             ${{ inputs.path }}
       - name: Setup Pages
         if: ${{ inputs.publish }}
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5
       - name: Upload artifact
         if: ${{ inputs.publish }}
         uses: actions/upload-pages-artifact@v3
