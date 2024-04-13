@@ -64,7 +64,7 @@ jobs:
         working-directory: ${{ inputs.working-dir }}
       - if: ${{ inputs.publish-docs }}
         name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5
       - if: ${{ inputs.publish-docs }}
         name: Upload artifact
         uses: actions/upload-pages-artifact@v3
