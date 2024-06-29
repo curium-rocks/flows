@@ -17,6 +17,11 @@ on:
         default: ''
         required: false
         description: A set of make targets to execute post deploy and verify
+      runs-on:
+        type: 'string'
+        required: false
+        default: '["ubuntu-latest"]'
+        description: string of a JSON array describing the run target.
     secrets:
       clone_token:
         required: false
@@ -24,7 +29,7 @@ on:
 jobs:
   validate-services:
     name: Validate
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(inputs.runs-on) }}
     permissions:
       contents: read
       packages: write

@@ -10,10 +10,15 @@ on:
         default: false
         type: boolean
         description: 'Whether to fail the job or continue when vulnerabilities are found in production dependencies'
+      runs-on:
+        type: 'string'
+        required: false
+        default: '["ubuntu-latest"]'
+        description: string of a JSON array describing the run target.
 jobs:
   build-and-test:
     name: Build And Test
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(inputs.runs-on) }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON( inputs.node_versions ) }}

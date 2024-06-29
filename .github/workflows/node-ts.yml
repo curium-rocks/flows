@@ -22,6 +22,11 @@ on:
         default: true
         type: boolean
         required: false
+      runs-on:
+        type: 'string'
+        required: false
+        default: '["ubuntu-latest"]'
+        description: string of a JSON array describing the run target.
     secrets:
       SONARQUBE_KEY:
         required: false
@@ -29,7 +34,7 @@ on:
 jobs:
   analyze:
     name: Analyze
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(inputs.runs-on) }}
     permissions:
       actions: read
       contents: read
@@ -91,7 +96,7 @@ jobs:
             coverage
   sonar:
     name: Sonar Scan
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(inputs.runs-on) }}
     if: inputs.sonar-enabled
     needs:
     - build-and-test
