@@ -78,3 +78,7 @@ jobs:
       - name: Run Post-Deploy Tasks
         if: ${{ inputs.post_deploy_make_targets != '' }}
         run: make ${{ inputs.post_deploy_make_targets }}
+      - name: Clean UP K3D
+        if: ${{ always() }}
+        run: k3d cluster delete test-cluste
+        continue-on-error: true
