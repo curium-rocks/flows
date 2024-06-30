@@ -80,5 +80,5 @@ jobs:
         run: make ${{ inputs.post_deploy_make_targets }}
       - name: Clean UP K3D
         if: ${{ always() }}
-        run: k3d cluster delete test-cluste
+        run: k3d cluster delete test-cluster
         continue-on-error: true
