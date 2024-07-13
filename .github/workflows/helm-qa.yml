@@ -17,23 +17,28 @@ on:
         default: ''
         type: string
         description: 'Extra args to pass to the chart testing tool'
+      runs-on:
+        type: 'string'
+        required: false
+        default: '["ubuntu-latest"]'
+        description: string of a JSON array describing the run target.
 jobs:
   lint-chart:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(inputs.runs-on) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
         with:
           fetch-depth: 0
       - name: Install Helm
         uses: azure/setup-helm@v3.5
         with:
           version: v3.10.0
-      - uses: actions/setup-python@871daa956ca9ea99f3c3e30acb424b7960676734
+      - uses: actions/setup-python@a0d74c0c423f896bc4e7be91d5cb1e2d54438db3
         with:
-          python-version: 3.7
+          python-version: 3.12.4
       - name: Install chart-testing
-        uses: helm/chart-testing-action@df9dfa7259f5d09615a31c4aae53338e2c621f8f
+        uses: helm/chart-testing-action@9c98eaab2efcdc7233e9c49d05cb68d0bec56aba
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
@@ -52,17 +57,17 @@ jobs:
       - name: Run chart-testing (lint)
         run: ct lint --chart-dirs ${{ inputs.charts_dir }} --target-branch ${{ github.event.repository.default_branch }}
   lint-docs:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(inputs.runs-on) }}
     needs: lint-chart
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
       - name: Run helm-docs
         run: |
           docker run --rm --volume "$PWD:/helm-docs" jnorwood/helm-docs:latest
           git diff --exit-code
   kubeval-chart:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(inputs.runs-on) }}
     needs:
       - lint-chart
       - lint-docs
@@ -70,6 +75,7 @@ jobs:
       fail-fast: false
       matrix:
         k8s:
+          - v1.29.0
           - v1.28.0
           - v1.27.0
           - v1.26.0
@@ -78,10 +84,10 @@ jobs:
           - v1.23.15
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
         with:
           fetch-depth: 0
-      - uses: azure/setup-kubectl@v3
+      - uses: azure/setup-kubectl@v4
         with:
           version: ${{ matrix.k8s }}
         id: install
@@ -141,7 +147,7 @@ jobs:
           done
   install-chart:
     name: install-chart
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(inputs.runs-on) }}
     needs:
       - lint-chart
       - lint-docs
@@ -150,6 +156,7 @@ jobs:
       fail-fast: false
       matrix:
         k8s:
+          - v1.29.0
           - v1.28.0
           - v1.27.0
           - v1.26.0
@@ -158,11 +165,11 @@ jobs:
           - v1.23.13
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 
         with:
           fetch-depth: 0
       - name: Create kind ${{ matrix.k8s }} cluster
-        uses: helm/kind-action@4be822c96b3a80076fb61a4e54a4e89d8d79c9c6 
+        uses: helm/kind-action@7e05df2fac4fbf57cd41d6fe42f8afd56516d847 
         with:
           node_image: kindest/node:${{ matrix.k8s }}
           version: v0.17.0 
@@ -171,7 +178,7 @@ jobs:
         run: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 
       - name: Install chart-testing
-        uses: helm/chart-testing-action@df9dfa7259f5d09615a31c4aae53338e2c621f8f 
+        uses: helm/chart-testing-action@9c98eaab2efcdc7233e9c49d05cb68d0bec56aba 
       - name: Add Helm Repos
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami

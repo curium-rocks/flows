@@ -17,6 +17,11 @@ on:
         default: ''
         required: false
         description: A set of make targets to execute post deploy and verify
+      runs-on:
+        type: 'string'
+        required: false
+        default: '["ubuntu-latest"]'
+        description: string of a JSON array describing the run target.
     secrets:
       clone_token:
         required: false
@@ -24,7 +29,7 @@ on:
 jobs:
   validate-services:
     name: Validate
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(inputs.runs-on) }}
     permissions:
       contents: read
       packages: write
@@ -54,7 +59,7 @@ jobs:
           sudo install skaffold /usr/local/bin/
       - name: Log into registry
         timeout-minutes: 5
-        uses: docker/login-action@3d58c274f17dffee475a5520cbe67f0a882c4dbb
+        uses: docker/login-action@0d4c9c5ea7693da7b068278f7b52bda2a190a446
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -73,3 +78,7 @@ jobs:
       - name: Run Post-Deploy Tasks
         if: ${{ inputs.post_deploy_make_targets != '' }}
         run: make ${{ inputs.post_deploy_make_targets }}
+      - name: Clean UP K3D
+        if: ${{ always() }}
+        run: k3d cluster delete test-cluster
+        continue-on-error: true

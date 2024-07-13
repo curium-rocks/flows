@@ -19,6 +19,23 @@ on:
         type: string
         default: documentation
         required: false
+      working-dir:
+        default: '.'
+        type: string
+        required: false
+      tag:
+        type: string
+        required: false
+        description: 'Tag to use when create-release is true'
+      create-release:
+        type: boolean
+        required: false
+        default: false
+      runs-on:
+        type: 'string'
+        required: false
+        default: '["ubuntu-latest"]'
+        description: string of a JSON array describing the run target.
     secrets:
       NPM_TOKEN:
         description: 'A token with push permission to npm'
@@ -26,7 +43,7 @@ on:
 jobs:
   publish:
     name: Publish Release
-    runs-on: 'ubuntu-latest'
+    runs-on: ${{ fromJSON(inputs.runs-on) }}
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js
@@ -34,20 +51,25 @@ jobs:
         with:
           node-version: ${{ inputs.node_version }}
           cache: 'npm'
+          cache-dependency-path: ${{ inputs.working-dir }}/package-lock.json
       - shell: bash
+        working-directory: ${{ inputs.working-dir }}
         run: npm ci
       - shell: bash
         run: npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN}}
+        working-directory: ${{ inputs.working-dir }}
         env:
           NODE_ACCESS_TOKEN: ${{ secrets.NPM_TOKEN }}
       - shell: bash
         run: npm publish --access public
+        working-directory: ${{ inputs.working-dir }}
       - if: ${{ inputs.publish-docs }}
         shell: bash
         run: npm run build:docs
+        working-directory: ${{ inputs.working-dir }}
       - if: ${{ inputs.publish-docs }}
         name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5
       - if: ${{ inputs.publish-docs }}
         name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -57,3 +79,7 @@ jobs:
         name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Create Release
+        if: ${{ inputs.create-release }}
+        run: |
+          gh release create ${{ inputs.tag }} --generate-notes

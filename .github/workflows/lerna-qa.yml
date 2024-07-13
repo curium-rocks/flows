@@ -14,10 +14,15 @@ on:
         default: main
         type: string
         description: The default/main branch
+      runs-on:
+        type: 'string'
+        required: false
+        default: '["ubuntu-latest"]'
+        description: string of a JSON array describing the run target.
 jobs:
   analyze:
     name: Analyze
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(inputs.runs-on) }}
     permissions:
       actions: read
       contents: read
@@ -38,13 +43,13 @@ jobs:
 
   build-and-test:
     name: Build And Test
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(inputs.runs-on) }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON( inputs.node_versions ) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
