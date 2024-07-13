@@ -6,6 +6,19 @@ on:
         default: '{"node-version": ["18.x","20.x", "22.x"]}'
         type: string
         required: false
+      upload-name:
+        type: string
+        required: false
+        default: artifacts
+      upload-paths:
+        type: string
+        required: false
+        default: |
+          coverage
+      upload-version:
+        default: '20.x'
+        type: string
+        required: false
       continue-on-prod-vulns:
         default: false
         type: boolean
@@ -35,10 +48,9 @@ jobs:
       - run: npm run lint --if-present
       - run: npm audit --omit dev
         continue-on-error: ${{ inputs.continue-on-prod-vulns }}
-      - run: npm test
+      - run: npm run test:e2e --if-present
       - uses: actions/upload-artifact@v4
-        if: ${{ matrix.node-version == '16.x' }}
+        if: ${{ matrix.node-version == inputs.upload-version }}
         with:
-          name: coverage
-          path: |
-            coverage
+          name: ${{ inputs.upload-name }}
+          path: ${{ inputs.upload-paths }}
