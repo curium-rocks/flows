@@ -6,6 +6,10 @@ on:
         default: '{"node-version": ["18.x","20.x", "22.x"]}'
         type: string
         required: false
+      cache-dependency-path:
+        type: string
+        default: 'package-lock.json'
+        required: false
       upload-name:
         type: string
         required: false
@@ -43,6 +47,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+          cache-dependency-path: package-lock.json
       - run: npm ci --prefer-offline
       - run: npm run build --if-present
       - run: npm run lint --if-present
