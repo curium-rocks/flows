@@ -53,6 +53,7 @@ jobs:
       - run: npm run lint --if-present
       - run: npm audit --omit dev
         continue-on-error: ${{ inputs.continue-on-prod-vulns }}
+      - run: npm run test --if-present
       - run: npm run test:e2e --if-present
       - uses: actions/upload-artifact@v4
         if: ${{ matrix.node-version == inputs.upload-version }}
