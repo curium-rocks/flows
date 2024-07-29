@@ -27,7 +27,7 @@ jobs:
     runs-on: ${{ fromJSON(inputs.runs-on) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+        uses: actions/checkout@9a9194f87191a7e9055e3e9b95b8cfb13023bb08
         with:
           fetch-depth: 0
       - name: Install Helm
@@ -61,7 +61,7 @@ jobs:
     needs: lint-chart
     steps:
       - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+        uses: actions/checkout@9a9194f87191a7e9055e3e9b95b8cfb13023bb08
       - name: Run helm-docs
         run: |
           docker run --rm --volume "$PWD:/helm-docs" jnorwood/helm-docs:latest
@@ -84,7 +84,7 @@ jobs:
           - v1.23.15
     steps:
       - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+        uses: actions/checkout@9a9194f87191a7e9055e3e9b95b8cfb13023bb08
         with:
           fetch-depth: 0
       - uses: azure/setup-kubectl@v4
@@ -165,7 +165,7 @@ jobs:
           - v1.23.13
     steps:
       - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 
+        uses: actions/checkout@9a9194f87191a7e9055e3e9b95b8cfb13023bb08 
         with:
           fetch-depth: 0
       - name: Create kind ${{ matrix.k8s }} cluster
