@@ -22,3 +22,5 @@ jobs:
     with:
       charts_dir: test-content/helm-qa/test/charts
       only-changed: false
+      ct_extra_args: |
+        --helm-extra-set-args='--set=service.type=ClusterIP'
