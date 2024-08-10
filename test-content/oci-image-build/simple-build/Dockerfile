@@ -1,1 +1,1 @@
-FROM alpine:3
+FROM alpine:20240807
