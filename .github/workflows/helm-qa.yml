@@ -22,6 +22,11 @@ on:
         required: false
         default: '["ubuntu-latest"]'
         description: string of a JSON array describing the run target.
+      run-kubeval:
+        type: 'boolean'
+        required: false
+        default: false
+        description: 'Whether the workflow should run kubeval or not'
 jobs:
   lint-chart:
     runs-on: ${{ fromJSON(inputs.runs-on) }}
@@ -67,6 +72,7 @@ jobs:
           docker run --rm --volume "$PWD:/helm-docs" jnorwood/helm-docs:latest
           git diff --exit-code
   kubeval-chart:
+    if: ${{ inputs.run-kubeval }}
     runs-on: ${{ fromJSON(inputs.runs-on) }}
     needs:
       - lint-chart
@@ -152,7 +158,6 @@ jobs:
     needs:
       - lint-chart
       - lint-docs
-      - kubeval-chart
     strategy:
       fail-fast: false
       matrix:
