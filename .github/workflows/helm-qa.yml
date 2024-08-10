@@ -32,6 +32,11 @@ on:
         required: false
         default: true
         description: 'Only lint and test changed charts'
+      log-artifact-prefix:
+        type: 'string'
+        required: false
+        default: ''
+        description: 'Optional prefix on cluster log artifact'
 jobs:
   lint-chart:
     runs-on: ${{ fromJSON(inputs.runs-on) }}
@@ -214,3 +219,11 @@ jobs:
         env:
           CT_HELM_EXTRA_ARGS: '--timeout 500s --debug'
         run: ct install --chart-dirs ${{ inputs.charts_dir }} --all --helm-extra-set-args "${{ inputs.helm_extra_sets }}" --debug ${{ inputs.ct_extra_args }}
+      - name: Exports logs
+        if: "${{ always() }}"
+        run: kind export logs /tmp/kind-logs --name=chart-testing
+      - name: Upload Logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.log-artifact-prefix }}-cluster-logs-${{ matrix.k8s }}
+          path: /tmp/kind-logs
