@@ -214,3 +214,11 @@ jobs:
         env:
           CT_HELM_EXTRA_ARGS: '--timeout 500s --debug'
         run: ct install --chart-dirs ${{ inputs.charts_dir }} --all --helm-extra-set-args "${{ inputs.helm_extra_sets }}" --debug ${{ inputs.ct_extra_args }}
+      - name: Exports logs
+        if: "${{ always() }}"
+        run: kind export logs /tmp/kind-logs --name=chart-testing
+      - name: Upload Logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: cluster-logs-${{ matrix.k8s }}
+          path: /tmp/kind-logs
