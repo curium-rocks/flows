@@ -7,12 +7,14 @@ on:
     paths:
       - .github/workflows/helm-qa.yml
       - .github/workflows/test-helm-qa.yml
+      - 'test-content/helm-qa/**/*'
   push:
     branches:
       - main
     paths:
       - .github/workflows/helm-qa.yml
       - .github/workflows/test-helm-qa.yml
+      - 'test-content/helm-qa/**/*'
 jobs:
   call-helm-qa:
     name: Verify
