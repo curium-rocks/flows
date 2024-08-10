@@ -22,6 +22,16 @@ on:
         required: false
         default: '["ubuntu-latest"]'
         description: string of a JSON array describing the run target.
+      run-kubeval:
+        type: 'boolean'
+        required: false
+        default: false
+        description: 'Whether the workflow should run kubeval or not'
+      only-changed:
+        type: 'boolean'
+        required: false
+        default: true
+        description: 'Only lint and test changed charts'
 jobs:
   lint-chart:
     runs-on: ${{ fromJSON(inputs.runs-on) }}
@@ -41,6 +51,7 @@ jobs:
         uses: helm/chart-testing-action@5aa1c68405a43a57240a9b2869379324b2bec0fc
       - name: Run chart-testing (list-changed)
         id: list-changed
+        if: ${{ inputs.only-changed }}
         run: |
           changed=$(ct list-changed --chart-dirs ${{ inputs.charts_dir }} --target-branch ${{ github.event.repository.default_branch }})
           if [[ -n "$changed" ]]; then
@@ -55,7 +66,11 @@ jobs:
           helm repo add couchdb https://apache.github.io/couchdb-helm/
           helm repo update
       - name: Run chart-testing (lint)
+        if: ${{ inputs.only-changed }}
         run: ct lint --chart-dirs ${{ inputs.charts_dir }} --target-branch ${{ github.event.repository.default_branch }}
+      - name: Run chart-testing (lint)
+        if: ${{ !inputs.only-changed }}
+        run: ct lint --chart-dirs ${{ inputs.charts_dir }} --all
   lint-docs:
     runs-on: ${{ fromJSON(inputs.runs-on) }}
     needs: lint-chart
@@ -67,6 +82,7 @@ jobs:
           docker run --rm --volume "$PWD:/helm-docs" jnorwood/helm-docs:latest
           git diff --exit-code
   kubeval-chart:
+    if: ${{ inputs.run-kubeval }}
     runs-on: ${{ fromJSON(inputs.runs-on) }}
     needs:
       - lint-chart
@@ -152,7 +168,6 @@ jobs:
     needs:
       - lint-chart
       - lint-docs
-      - kubeval-chart
     strategy:
       fail-fast: false
       matrix:
@@ -189,6 +204,12 @@ jobs:
           helm repo add couchdb https://apache.github.io/couchdb-helm/
           helm repo update
       - name: Run chart install
+        if: ${{ inputs.only-changed }}
         env:
           CT_HELM_EXTRA_ARGS: '--timeout 500s --debug'
         run: ct install --chart-dirs ${{ inputs.charts_dir }} --target-branch ${{ github.event.repository.default_branch }} --helm-extra-set-args "${{ inputs.helm_extra_sets }}" --debug ${{ inputs.ct_extra_args }}
+      - name: Run chart install
+        if: ${{ !inputs.only-changed }}
+        env:
+          CT_HELM_EXTRA_ARGS: '--timeout 500s --debug'
+        run: ct install --chart-dirs ${{ inputs.charts_dir }} --all --helm-extra-set-args "${{ inputs.helm_extra_sets }}" --debug ${{ inputs.ct_extra_args }}

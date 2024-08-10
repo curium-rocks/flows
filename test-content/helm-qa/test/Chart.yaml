@@ -1,0 +1,10 @@
+apiVersion: v2
+name: test-charts
+description: A chart holding test targets
+type: library
+version: 0.1.0
+
+dependencies:
+  - name: wireguard
+    version: "0.23.0"
+    repository: "https://bryopsida.github.io/wireguard-chart"
