@@ -27,13 +27,13 @@ jobs:
   call-helm-q-with-matrix:
     strategy:
       matrix:
-        include: 
-            - name: suite1
-              ct_extra_args: |
-                --helm-extra-set-args='--set=service.type=ClusterIP'
+        suite:
+          - name: suite1
+            ct_extra_args: |
+              --helm-extra-set-args='--set=service.type=ClusterIP'
     name: Verify
     uses: ./.github/workflows/helm-qa.yml
     with:
       charts_dir: test-content/helm-qa/test/charts
       only-changed: false
-      ct_extra_args: ${{ matrix.ct_extra_args }}
+      ct_extra_args: ${{ matrix.suite.ct_extra_args }}
