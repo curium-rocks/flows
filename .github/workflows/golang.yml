@@ -46,7 +46,7 @@ jobs:
         with:
           name: Go Tests
           path: report.xml
-          reporter: junit
+          reporter: java-junit
       - name: Collect code coverage
         run: go test -coverprofile=coverage.out ./...
       - name: Convert coverage to lcov format
