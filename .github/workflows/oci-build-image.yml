@@ -3,6 +3,11 @@ name: Build Image
 on:
   workflow_call:
     inputs:
+      platforms:
+        type: 'string'
+        required: false
+        default: 'linux/amd64,linux/arm64'
+        description: 'A csv list of platforms/archs to create images for'
       runs-on:
         type: 'string'
         required: false
@@ -185,7 +190,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
           cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ inputs.platforms}}
       - name: Sign the published Docker image
         if: ${{ github.event_name != 'pull_request' }}
         env:
