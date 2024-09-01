@@ -7,6 +7,10 @@ on:
         default: false
         type: boolean
         required: false
+      working_dir:
+        default: '.'
+        type: string
+        required: false
       build_task:
         default: build:docs
         type: string
@@ -35,15 +39,18 @@ jobs:
         with:
           node-version: ${{ inputs.node_version }}
           cache: 'npm'
+          cache-dependency-path: ${{ inputs.working_dir }}/package-lock.json
       - run: npm ci
+        working-directory: ${{ inputs.working_dir }}
       - name: Build Docs
         run: npm run ${{ inputs.build_task }}
+        working-directory: ${{ inputs.working_dir }}
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.path}}
           path: |
-            ${{ inputs.path }}
+            ${{ inputs.working_dir }}/${{ inputs.path }}
       - name: Setup Pages
         if: ${{ inputs.publish }}
         uses: actions/configure-pages@v5
@@ -51,7 +58,7 @@ jobs:
         if: ${{ inputs.publish }}
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '${{ inputs.path }}'
+          path: '${{ inputs.working_dir }}/${{ inputs.path }}'
       - name: Deploy to GitHub Pages
         if: ${{ inputs.publish }}
         id: deployment
