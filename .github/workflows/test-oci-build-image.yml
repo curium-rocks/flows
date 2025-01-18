@@ -1,0 +1,27 @@
+name: Test OCI Build Image
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/oci-build-image.yml
+      - .github/workflows/test-oci-build-image.yml
+      - "test-content/oci-build-image/**/*"
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/oci-build-image.yml
+      - .github/workflows/test-oci-build-image.yml
+      - "test-content/oci-build-image/**/*"
+jobs:
+  call-image-build-qa:
+    name: Verify
+    uses: ./.github/workflows/oci-build-image.yml
+    with:
+      context: test-content/oci-image-build/simple-build/
+      codeql_enabled: true
+      image_name: flows/test-build
+      registry: ghcr.io/curium-rocks
+      push_in_pr: false

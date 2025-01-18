@@ -2,12 +2,22 @@ name: Node Typescript QA
 on: 
   workflow_call:
     inputs:
+      extra-packages:
+        type: string
+        required: false
+        default: 'libavahi-compat-libdnssd-dev'
+        description: 'Extra packages to install before running the test in space delimited format'
+      node-coverage-version:
+        type: string
+        required: false
+        default: '16.x'
+        description: 'The Node.js version to collect test coverage against'
       os:
         default: '["ubuntu-latest"]'
         type: string
         required: false
       node_versions:
-        default: '["16.x","18.x","20.x"]'
+        default: '["16.x","18.x","20.x", "22.x"]'
         type: string
         required: false
       continue-on-prod-vulns:
@@ -43,8 +53,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
     - name: Install native dependencies
+      if: ${{ inputs.extra-packages != '' }}
       run: |
-        sudo apt-get install libavahi-compat-libdnssd-dev
+        sudo apt-get install ${{ inputs.extra-packages }}
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
@@ -66,11 +77,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+        uses: actions/checkout@85e6279cec87321a52edac9c87bce653a07cf6c2
       - name: Install native dependencies
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.os == 'ubuntu-latest' && inputs.extra-packages != '' }}
         run: |
-          sudo apt-get install libavahi-compat-libdnssd-dev
+          sudo apt-get install ${{ inputs.extra-packages }}
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -89,7 +100,7 @@ jobs:
       - run: npm test
         working-directory: ${{ inputs.working-dir }}
       - uses: actions/upload-artifact@v4
-        if: ${{ matrix.node-version == '16.x' }}
+        if: ${{ matrix.node-version == inputs.node-coverage-version }}
         with:
           name: coverage
           path: |

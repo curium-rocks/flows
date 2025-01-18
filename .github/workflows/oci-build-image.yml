@@ -3,6 +3,11 @@ name: Build Image
 on:
   workflow_call:
     inputs:
+      platforms:
+        type: 'string'
+        required: false
+        default: 'linux/amd64,linux/arm64'
+        description: 'A csv list of platforms/archs to create images for'
       runs-on:
         type: 'string'
         required: false
@@ -91,7 +96,7 @@ jobs:
           GH_TOKEN: ${{ secrets.clone_token }}
       - name: Install cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@b235ed95bef2a3cf9f8641bc537bc22c7cb9a3a8
+        uses: sigstore/cosign-installer@789d2886c082e8fb7b9710810b73c3f0840573ed
         with:
           cosign-release: 'v1.13.6'
       # for multi arch container builds
@@ -102,10 +107,10 @@ jobs:
       - name: Setup Docker buildx
         id: buildx
         timeout-minutes: 4
-        uses: docker/setup-buildx-action@2ad185228a349d19414702819e06df9fa4314287
+        uses: docker/setup-buildx-action@6a25f988bdfa969e96a38fc9f843ea31e0b5df27
       - name: Log into registry
         timeout-minutes: 5
-        uses: docker/login-action@0d4c9c5ea7693da7b068278f7b52bda2a190a446
+        uses: docker/login-action@327cd5a69de6c009b9ce71bce8395f28e651bf99
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -118,7 +123,7 @@ jobs:
       - name: Extract Docker metadata
         id: meta
         timeout-minutes: 5
-        uses: docker/metadata-action@a64d0487d7069df33b279515d35d60fa80e2ea62
+        uses: docker/metadata-action@8e1d5461f02b7886d3c1a774bfbd873650445aa2
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
@@ -141,7 +146,7 @@ jobs:
       - name: Build Docker image
         id: build
         timeout-minutes: 25
-        uses: docker/build-push-action@1a162644f9a7e87d8f4b053101d1d9a712edc18c
+        uses: docker/build-push-action@67a2d409c0a876cbe6b11854e3e25193efe4e62d
         with:
           context: ${{ inputs.context }}
           load: true
@@ -175,7 +180,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' || inputs.push_in_pr }}
         id: push
         timeout-minutes: 60
-        uses: docker/build-push-action@1a162644f9a7e87d8f4b053101d1d9a712edc18c
+        uses: docker/build-push-action@67a2d409c0a876cbe6b11854e3e25193efe4e62d
         with:
           context: ${{ inputs.context }}
           builder: ${{ steps.buildx.outputs.name }}
@@ -185,7 +190,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
           cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ inputs.platforms}}
       - name: Sign the published Docker image
         if: ${{ github.event_name != 'pull_request' }}
         env:

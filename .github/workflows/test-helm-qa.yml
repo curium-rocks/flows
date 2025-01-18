@@ -1,0 +1,32 @@
+name: Test Helm QA
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/helm-qa.yml
+      - .github/workflows/test-helm-qa.yml
+      - 'test-content/helm-qa/**/*'
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/helm-qa.yml
+      - .github/workflows/test-helm-qa.yml
+      - 'test-content/helm-qa/**/*'
+jobs:
+  call-helm-qa:
+    strategy:
+      matrix:
+        suite:
+          - name: suite1
+            ct_extra_args: |
+              --helm-extra-set-args='--set=service.type=ClusterIP'
+    name: Verify Test Suites
+    uses: ./.github/workflows/helm-qa.yml
+    with:
+      charts_dir: test-content/helm-qa/test/charts
+      only-changed: false
+      ct_extra_args: ${{ matrix.suite.ct_extra_args }}
+      log-artifact-prefix: ${{ matrix.suite.name }}
