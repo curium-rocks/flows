@@ -14,7 +14,7 @@ A Helm chart for managing a wireguard vpn in kubernetes
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| affinity | object | `{"podAntiAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":[{"labelSelector":{"matchLabels":{"app":"{{ .Release.Name }}-wireguard","role":"vpn"}},"topologyKey":"kubernetes.io/hostname"}]}}` | Set pod affinity or antiAffinity |
+| affinity | object | `{"podAntiAffinity":null}` | Set pod affinity or antiAffinity |
 | autoscaling.enabled | bool | `true` |  |
 | autoscaling.maxReplicas | int | `10` |  |
 | autoscaling.minReplicas | int | `3` |  |

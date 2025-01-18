@@ -140,13 +140,7 @@ affinity:
   #     - matchExpressions:
   #       - key: "example.com/vpn"
   #         operator: Exists
-  podAntiAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app: "{{ .Release.Name }}-wireguard"
-            role: vpn
-        topologyKey: kubernetes.io/hostname
+  podAntiAffinity: ~
 # -- Set pod nodeSelector, a simplified version of affinity
 nodeSelector: {}
   # example.com/vpn: ""
