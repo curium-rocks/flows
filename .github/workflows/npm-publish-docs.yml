@@ -33,7 +33,7 @@ jobs:
     name: Publish Docs
     runs-on: ${{ fromJSON(inputs.runs-on) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Use Node.js ${{ inputs.node_version }}
         uses: actions/setup-node@v4
         with:
