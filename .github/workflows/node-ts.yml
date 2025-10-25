@@ -99,7 +99,7 @@ jobs:
         working-directory: ${{ inputs.working-dir }}
       - run: npm test
         working-directory: ${{ inputs.working-dir }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: ${{ matrix.node-version == inputs.node-coverage-version }}
         with:
           name: coverage

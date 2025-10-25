@@ -55,7 +55,7 @@ jobs:
         continue-on-error: ${{ inputs.continue-on-prod-vulns }}
       - run: npm run test --if-present
       - run: npm run test:e2e --if-present
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: ${{ matrix.node-version == inputs.upload-version }}
         with:
           name: ${{ inputs.upload-name }}
