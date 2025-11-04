@@ -51,7 +51,7 @@ jobs:
           version: v3.10.0
       - uses: actions/setup-python@cfd55ca82492758d853442341ad4d8010466803a
         with:
-          python-version: 3.13.7
+          python-version: 3.14.0
       - name: Install chart-testing
         uses: helm/chart-testing-action@b0c06062b7b8cb6f3bf1473a0c117ba2a86f3442
       - name: Run chart-testing (list-changed)
