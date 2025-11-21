@@ -51,7 +51,7 @@ jobs:
       security-events: write
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Install native dependencies
       if: ${{ inputs.extra-packages != '' }}
       run: |
@@ -112,7 +112,7 @@ jobs:
     needs:
     - build-and-test
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 0
     - uses: actions/download-artifact@v6
