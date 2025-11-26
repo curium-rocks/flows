@@ -17,7 +17,7 @@ on:
         type: string
         required: false
       node_versions:
-        default: '["16.x","18.x","20.x", "22.x", "24.x"]'
+        default: '["18.x","20.x", "22.x", "24.x"]'
         type: string
         required: false
       continue-on-prod-vulns:
