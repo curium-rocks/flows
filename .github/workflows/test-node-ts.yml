@@ -1,3 +1,4 @@
+name: Verify Node TS
 on:
   pull_request:
     branches:
