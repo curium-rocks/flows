@@ -12,7 +12,7 @@ on:
       - main
     paths:
       - .github/workflows/node-ts.yml
-      - .github/workflows/test-helm-qa.yml
+      - .github/workflows/test-node-ts.yml
       - 'test-content/nest-project/**/*'
 jobs:
   call-node-ts:
