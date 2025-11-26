@@ -17,3 +17,5 @@ jobs:
   call-node-ts:
     name: Verify NPM Lint and Validate
     uses: ./.github/workflows/npm-lint-and-validate.yml
+    with:
+      working-dir: ./test-content/nest-project/

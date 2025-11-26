@@ -17,3 +17,5 @@ jobs:
   call-node-ts:
     name: Verify Node TS
     uses: ./.github/workflows/node-ts.yml
+    with:
+      working-dir: ./test-content/nest-project/
