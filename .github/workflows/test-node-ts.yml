@@ -20,3 +20,4 @@ jobs:
     uses: ./.github/workflows/node-ts.yml
     with:
       working-dir: ./test-content/nest-project/
+      sonar-enabled: false
