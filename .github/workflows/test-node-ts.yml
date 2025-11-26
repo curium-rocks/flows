@@ -1,0 +1,19 @@
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/node-ts.yml
+      - .github/workflows/test-node-ts.yml
+      - 'test-content/nest-project/**/*'
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/node-ts.yml
+      - .github/workflows/test-helm-qa.yml
+      - 'test-content/nest-project/**/*'
+jobs:
+  call-node-ts:
+    name: Verify Node TS
+    uses: ./.github/workflows/node-ts.yml

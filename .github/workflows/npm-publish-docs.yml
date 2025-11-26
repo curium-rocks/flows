@@ -40,7 +40,7 @@ jobs:
           node-version: ${{ inputs.node_version }}
           cache: 'npm'
           cache-dependency-path: ${{ inputs.working_dir }}/package-lock.json
-      - run: npm ci
+      - run: npm ci --ignore-scripts
         working-directory: ${{ inputs.working_dir }}
       - name: Build Docs
         run: npm run ${{ inputs.build_task }}

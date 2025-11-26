@@ -1,0 +1,19 @@
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/npm-lint-and-validate.yml
+      - .github/workflows/test-npm-lint-and-validate.yml
+      - 'test-content/nest-project/**/*'
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/npm-lint-and-validate.yml
+      - .github/workflows/test-npm-lint-and-validate.yml
+      - 'test-content/nest-project/**/*'
+jobs:
+  call-node-ts:
+    name: Verify NPM Lint and Validate
+    uses: ./.github/workflows/npm-lint-and-validate.yml

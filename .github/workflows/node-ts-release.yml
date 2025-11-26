@@ -54,7 +54,7 @@ jobs:
           cache-dependency-path: ${{ inputs.working-dir }}/package-lock.json
       - shell: bash
         working-directory: ${{ inputs.working-dir }}
-        run: npm ci
+        run: npm ci --ignore-scripts
       - shell: bash
         run: npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN}}
         working-directory: ${{ inputs.working-dir }}
