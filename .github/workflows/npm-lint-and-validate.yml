@@ -36,6 +36,11 @@ on:
         type: 'string'
         required: false
         default: './'
+      ignore-scripts:
+        type: boolean
+        required: false
+        default: true
+        description: 'Whether or not install scripts will be executed or not, if not and your dependencies rely on it, you must define an allow:scripts script at the top level to run your allowed list of scripts'
 jobs:
   build-and-test:
     name: Build And Test
@@ -53,7 +58,13 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ${{ inputs.working-dir }}package-lock.json
       - run: npm ci --prefer-offline --ignore-scripts
-        working-directory: ${{ inputs.working-dir }} 
+        if: ${{ inputs.ignore-scripts }}
+        working-directory: ${{ inputs.working-dir }}
+      - run: npm ci --prefer-offline
+        if: ${{ inputs.ignore-scripts }}
+        working-directory: ${{ inputs.working-dir }}
+      - run: npm run allow:scripts --if-present
+        working-directory: ${{ inputs.working-dir }}
       - run: npm run build --if-present
         working-directory: ${{ inputs.working-dir }}
       - run: npm run lint --if-present
