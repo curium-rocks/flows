@@ -72,6 +72,20 @@ jobs:
       with:
         category: "/language:javascript"
 
+  dependency-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+    - name: 'Checkout Repository'
+      uses: actions/checkout@v5
+    - name: Dependency Review
+      uses: actions/dependency-review-action@v4
+      with:
+        comment-summary-in-pr: true
+        fail-on-scopes: runtime
+        fail-on-severity: high
   build-and-test:
     name: Build And Test
     strategy:

@@ -42,6 +42,20 @@ on:
         default: true
         description: 'Whether or not install scripts will be executed or not, if not and your dependencies rely on it, you must define an allow:scripts script at the top level to run your allowed list of scripts'
 jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+    - name: 'Checkout Repository'
+      uses: actions/checkout@v5
+    - name: Dependency Review
+      uses: actions/dependency-review-action@v4
+      with:
+        comment-summary-in-pr: true
+        fail-on-scopes: runtime
+        fail-on-severity: high
   build-and-test:
     name: Build And Test
     runs-on: ${{ fromJSON(inputs.runs-on) }}
