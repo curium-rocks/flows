@@ -46,7 +46,7 @@ jobs:
         run: npm run ${{ inputs.build_task }}
         working-directory: ${{ inputs.working_dir }}
       - name: Upload Artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ inputs.path}}
           path: |
