@@ -229,7 +229,7 @@ jobs:
         if: "${{ always() }}"
         run: kind export logs /tmp/kind-logs --name=chart-testing
       - name: Upload Logs
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ inputs.log-artifact-prefix }}-cluster-logs-${{ matrix.k8s }}
           path: /tmp/kind-logs

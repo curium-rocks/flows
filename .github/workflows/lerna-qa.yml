@@ -61,7 +61,7 @@ jobs:
       - run: lerna exec "npm audit --omit dev" --since ${{ inputs.main-branch-name }}
         continue-on-error: ${{ inputs.continue-on-prod-vulns }}
       - run: lerna run test --since ${{ inputs.main-branch-name }}
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         if: ${{ matrix.node-version == '16.x' }}
         with:
           name: coverage
